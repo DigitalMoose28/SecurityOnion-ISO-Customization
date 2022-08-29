@@ -1,31 +1,39 @@
 # SecurityOnion-ISO-Customization
+This is a fork from ThreatHunterNotebook's Security Onion ISO Customization. I have much appreciation for what ThreatHunterNotebooks has created and I wouldn't have able to create this without the help of his GitHub.
+
 Security Onion ISO Customization Process
-In this repo, we will present a method (one of many) to customize the Security Onion 2.3 ISO.  The reason for this is to bypass certain options and apply new options to the kickstart script (ks.cfg) in order to automate the process of installing Security Onion 2.3 in special circumstances. The circumstances in this case are deploying SO 2.3 to multiple ESXi systems without user intervention.
-## Setup Security Onion ISO for custom configuration
+This repository is an update, as well as an introduction of automation for creating automated Security Onion ISO's by the use of kickstart scritps and Security Onions built in automation processes.
+## System Prep
 The first step to creating a custom SO ISO is to download the ISO to a system that can create an ISO.  In this case, we use either a Ubuntu system or CentOS system.
 The current version of SO is 2.3.140.
 On a Ubuntu system ensure the following packages are installed:
 <pre><code>sudo apt install isohybrid
 sudo apt install syslinux-utils
 sudo apt install isolinux
+sudo apt install ansible
 </code></pre>
 On a CentOS system ensure the following packages are installed:
-<pre><code>sudo yum install mkisofs
+<pre><code>
+sudo yum install mkisofs
 sudo yum install syslinux
+sudo yum install epel-release
+sudo yum install ansible
 </code></pre>
 Copy the Security Onion 2.3.x ISO to your Linux platform.
 Mount the ISO.
 Create a directory to which you will copy the ISO files.
-Copy all files and directories to the newly created directory.
+Here we are only copying specific files that we need for the automation of the security onion ISO.
 <pre><code>sudo mount -o loop securityonion-2.3.61.iso /mnt
-sudo mkdir /tmp/seconionCustom
-sudo cp -Rvp /mnt/* /tmp/seconionCustom/
-cd /tmp/seconionCustom
+sudo mkdir /tmp/seconion
+sudo cp /mnt/isolinux.cfg /tmp/seconion/
+sudo cp /mnt/ks.cfg /tmp/seconion/
+sudo cp /mnt/SecurityOnion/setup/automation/distributed-airgap-* /tmp/seconion
+cd /tmp/seconion
 </code></pre>
-## Make Security Onion ISO Configuration Changes
-We are primarily concerned with two files: isolinux.cfg and ks.cfg
-### isolinux.cfg changes
-The isolinux.cfg file is the boot menu that allows the user to select how they want to boot the system.  Since we are installing to ESXi using the ISO mounted on a CDROM, we want to make changes to ensure it is going to read our custom ks.cfg file from the CDROM.
+##########################################################################################################################################################
+We are primarily concerned with three files: isolinux.cfg and ks.cfg and the distributed-airgap files
+### isolinux.cfg configurations
+The isolinux.cfg file is the boot menu that allows the user to select how they want to boot the system. Since most methods of installing security utilize a mounted cdrom (ESXI, IPMI) we need to change isolinux.cfg to reflect this.
 
 Change the following
 <pre><code>
@@ -69,8 +77,9 @@ The SO install also has a boot message that waits for the user to press ENTER be
 <pre><code>
 #display boot.msg
 </code></pre>
+###############################################################################################################################################################
 Save the file.  Next we want to customize the kickstart script.
-### ks.cfg changes
+### ks.cfg custonmization
 The following is the current ks.cfg file installed on the ISO
 <pre><code>
 # Set the firewall to allow SSH
@@ -523,16 +532,17 @@ fi
 %end
 </code></pre>
 Before we discuss changing the kickstart script, let's discuss our goals
-1. Since we are using Ansible to install our SO virtual machines directly to ESXi, we need to add a line to ensure our network interfaces activate properly.
-2. We want the SO install to be automatic with no user intervention.  We will need to comment out several sections of the kickstart script for this to happen.
+1. Since we are using Ansible to install automatically when utilizing a mounted cdrom, we need to add a line to ensure our network interfaces assign proper ip addressing so we do not need to rely on dhcp or reservations.
+2. We want the SO install to be automatic with no user intervention.
 3. We want to  make sure a preliminary username and password is implemented so the Ansible playbooks can make the necessary SSH communications.
 4. We want to set the SecurityOnion tools directory to executable to ensure the automated install process has the correct permissions.
+5. Automate the process so we can create iso's for various situations.
 
 #### Goal 1
 For goal 1, we will add the following lines to the ks.cfg script
 <pre><code>
 # Network information
-network  --bootproto=dhcp --device=link --onboot=on --activate
+network  --bootproto=static
 </code></pre>
 
 #### Goal 2
@@ -966,7 +976,7 @@ PASSWORD2="MYPASSWORD"
     echo "Passwords don't match. Press enter to try again. "
     read -p
   fi
-done
+#done THIS NEEEDED TO BE COMMENETED OUT IN THREATHUNTERNOTEBOOK'S Github
 exec < /dev/tty1 > /dev/tty1
 chvt 1
 %end

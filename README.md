@@ -34,7 +34,7 @@ sudo cp /mnt/ks.cfg /tmp/seconion/
 sudo cp /mnt/SecurityOnion/setup/automation/distributed-airgap-* /tmp/seconion
 cd /tmp/seconion
 </code></pre>
-##########################################################################################################################################################
+###############################################################################################################
 
 We are primarily concerned with three files: isolinux.cfg and ks.cfg and the distributed-airgap files
 ### isolinux.cfg configurations

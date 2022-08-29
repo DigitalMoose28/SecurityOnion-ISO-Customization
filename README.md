@@ -787,5 +787,3 @@ ansible-playbook playbooks/SO_hard_install.yaml
 ansible-playbook playbooks/SO_Sensor_config.yaml
 ansible-playbook playbooks/SO_Sensor_setup.yaml
 ansible-playbook playbooks/SO_ruleupdate_MGR.yaml
-ansible-playbook playbooks/
-ansible-playbook playbooks/

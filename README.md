@@ -1,4 +1,4 @@
-# SecurityOnion-ISO-Customization
+# SecurityOnion-ISO-Customization and Ansible deployment
 This is a fork from ThreatHunterNotebook's Security Onion ISO Customization. I have much appreciation for what ThreatHunterNotebooks has created and I wouldn't have able to create this without the help of his GitHub.
 
 Security Onion ISO Customization Process

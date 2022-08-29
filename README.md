@@ -1,5 +1,5 @@
 # SecurityOnion-ISO-Customization and Ansible Deployment
-This is a fork from ThreatHunterNotebook's Security Onion ISO Customization. I have much appreciation for what ThreatHunterNotebooks has created and I wouldn't have able to create this without the help of his GitHub.
+This is a fork from ThreatHunterNotebook's Security Onion ISO Customization. I have much appreciation for what ThreatHunterNotebooks has created and I wouldn't have able to create this without the help of his GitHub. Part of this repository is meant to be an update and to fix many of the issues I ran into while utilizing ThreatHunterNotebooks's Security Onion ISO customization and ansible deployment.
 
 Security Onion ISO Customization Process
 This repository is an update, as well as an introduction of automation for creating automated Security Onion ISO's by the use of kickstart scritps and Security Onions built in automation processes.
@@ -91,126 +91,9 @@ Before we discuss changing the kickstart script, let's discuss our goals
 4. We want to set the SecurityOnion tools directory to executable to ensure the automated install process has the correct permissions.
 5. Automate the process using ansible so we can create iso's for various situations.
 
-#### Goal 1
-For goal 1, we will add the following lines to the ks.cfg script
-<pre><code>
-# Network information
-network  --bootproto=static --ip={{ SOManager.IP }} --netmask={{ SOManager.Subnet }} --gateway={{ SOManager.Gateway }} --device=ens33 --onboot=on --activate
-</code></pre>
 
-#### Goal 2
-For goal 2, we need to comment out various lines that cause the install to wait for user input.  We don't want this to happen since it halts our autmated install. Note that the lines are already commented (preceeded by a hashtag).
-<pre><code>
-#while [[ "$INSTALL" != "yes" ]]; do
-#  clear
-#  echo "###########################################"
-#  echo "##          ** W A R N I N G **          ##"
-#  echo "##    _______________________________    ##"
-#  echo "##                                       ##"
-#  echo "##  Installing the Security Onion ISO    ##"
-#  echo "## on this device will DESTROY ALL DATA  ##"
-#  echo "##            and partitions!            ##"
-#  echo "##                                       ##"
-#  echo "##      ** ALL DATA WILL BE LOST **      ##"
-#  echo "###########################################"
-#  echo "Do you wish to continue? (Type the entire word 'yes' to proceed.) "
-#  read INSTALL
-#done
 
-#userPattern="^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$"
-#firstAttempt=1
-#invalidUsers=("root bin daemon adm lp sync shutdown halt mail operator games ftp nobody systemd-network dbus polkitd sshd postfix chrony socore soremote ntp tcpdump #elasticsearch stenographer suricata zeek curator kratos kibana elastalert ossecm ossecr ossec logstash")
-#while [[ ! $SOUSER =~ $userPattern ]]; do
-#  echo ""
-#  if [ $firstAttempt -eq 1 ]; then
-#    echo "A new administrative user will be created. This user will be used for setting up and administering Security Onion."
-#  else
-#    echo "The provided username is not valid, try again."
-#  fi
-#  echo ""
-#  echo -n "Enter an administrative username: "
-#  read SOUSER
-#  firstAttempt=0
-#  if [[ " ${invalidUsers[@]} " =~ " ${SOUSER} " ]]; then
-#    SOUSER=
-#  fi
-#done
-
-#while [ $PWMATCH != yes ]; do
-# echo ""
-#  echo "Let's set a password for the $SOUSER user:"
-#  echo ""
-#  echo -n "Enter a password: "
-#  PASSWORD1=''
-#  while IFS= read -r -s -n1 char; do
-#    [[ -z $char ]] && { printf '\n'; break; } # ENTER pressed; output \n and break.
-#    if [[ $char == $'\x7f' ]]; then # backspace was pressed
-#      # Remove last char from output variable.
-#      [[ -n $PASSWORD1 ]] && PASSWORD1=${PASSWORD1%?}
-#      # Erase '*' to the left.
-#      printf '\b \b'
-#    else
-#      # Add typed char to output variable.
-#      PASSWORD1+=$char
-#      # Print '*' in its stead.
-#      printf '*'
-#    fi
-#  done
-
-#  echo -n "Re-enter the password: "
-#  PASSWORD2=''
-#  while IFS= read -r -s -n1 char; do
-#    [[ -z $char ]] && { printf '\n'; break; } # ENTER pressed; output \n and break.
-#    if [[ $char == $'\x7f' ]]; then # backspace was pressed
-#      # Remove last char from output variable.
-#      [[ -n $PASSWORD2 ]] && PASSWORD2=${PASSWORD2%?}
-#      # Erase '*' to the left.
-#      printf '\b \b'
-#    else
-#      # Add typed char to output variable.
-#      PASSWORD2+=$char
-#      # Print '*' in its stead.
-#      printf '*'
-#    fi
-#  done
-</code></pre>
-We also want to make sure that an automatic reboot occurs after the install is complete.  To ensure this happens, we will comment out a few lines at the end of the ks.cfg script and add a reboot command at the end of the script as follows.
-<pre><code>
-#  echo "Initial Install Complete. Press [Enter] to reboot!"
-#  read -p "Initial Install Complete. Press [Enter] to reboot!"
-  exec < /dev/tty1 > /dev/tty1
-  chvt 1
-fi
-%end
-
-%packages --nobase
-@core
-%end
-#reboot <---- Not needed
-</code></pre>
-#### Goal 3
-Finally we want to add a username and password to ensure that our Ansible palybooks can connect to the SO nodes. In the section below, we add the SOUSER, PASSWORD1, and PASSWORD2 lines after the section we previously commented out asking for a username and password input.
-<pre><code>
-...
-#      PASSWORD2+=$char
-#      # Print '*' in its stead.
-#      printf '*'
-#    fi
-#  done
-SOUSER="MYUSERNAME"
-PASSWORD1="MYPASSWORD"
-PASSWORD2="MYPASSWORD"
-  if [ $PASSWORD1 == $PASSWORD2 ]; then
-    echo PASSWORD=$PASSWORD1 >> /tmp/variables.txt
-...
-</code></pre>
-#### Goal 4
-Add the following to the ks.cfg
-<pre><code>
-chmod -R +x /home/$SOUSER/SecurityOnion/salt/common/tools/sbin/
-</code></pre>
-
-Below is an example of the customized ks.cfg file. The sections we commented out earlier are completely removed from this example.
+Below is an example of the customized ks.cfg file. 
 <pre><code>
 # Set the firewall to allow SSH
 firewall --enabled --port=22:tcp

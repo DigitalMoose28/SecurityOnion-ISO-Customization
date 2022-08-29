@@ -82,7 +82,7 @@ The SO install also has a boot message that waits for the user to press ENTER be
 <pre><code>
 #display boot.msg
 </code></pre>
-###############################################################################################################################################################
+############################################################################################
 Save the file.  Next we want to customize the kickstart script.
 </code></pre>
 Before we discuss changing the kickstart script, let's discuss our goals

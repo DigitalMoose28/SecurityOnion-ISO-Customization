@@ -776,13 +776,13 @@ chmod 777 securityonionCustom-2.3.61.iso
 </code></pre>
 
 Moving on to automation. Run the following playbooks in order. 
-The following playbooks are meant to deploy 6 physical sensors and 1 ESXI instance of SOManager and 1 ESXI instance of SOSearch. 
+The following playbooks are meant to deploy 1 physical sensors and 1 ESXI instance of SOManager and 1 ESXI instance of SOSearch. 
 This setup deploys the Manager and Search nodes before the sensors to ensure proper execution of each of the nodes. 
 <pre><code>
 ansible-playbook playbooks/deploy.yaml
 ansible-playbook playbooks/pre-deploy.yaml
 ansible-playbook playbooks/isogen.yaml
-ansible-playbook playbooks/SO_MGR_Deploy.yaml
+ansible-playbook playbooks/SO_Mamager_Search_Deploy.yaml
 ansible-playbook playbooks/SO_MGR_Config.yaml
 ansible-playbook playbooks/SO_MGR_setup.yaml
 ansible-playbook playbooks/SO_Search_config.yaml

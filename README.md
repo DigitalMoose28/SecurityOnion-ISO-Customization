@@ -19,6 +19,10 @@ sudo yum install syslinux
 sudo yum install epel-release
 sudo yum install ansible
 </code></pre>
+Both will need the SMCIPMITool unzipped in its own SMCIPMITool directory. This tools is a commandline method that can be used to automate installs of ISO's on servers with IPMI interfaces.
+<pre><code>
+https://www.supermicro.com/en/support/resources/downloadcenter/smsdownload
+</code></pre>
 Copy the Security Onion 2.3.x ISO to your Linux platform.
 Mount the ISO.
 Create a directory to which you will copy the ISO files.

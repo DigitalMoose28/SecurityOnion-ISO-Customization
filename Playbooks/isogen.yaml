@@ -44,7 +44,5 @@
       shell:
         sudo rm -rf /opt/baremetal/*
 
-    - name: chown isos
-      shell: |
-        sudo chown -R cptadmin:cptadmin /ansible
+
 ... 

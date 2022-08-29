@@ -1,0 +1,28 @@
+- name: configure seconion distributed manager node
+  hosts: SO_MGR
+  become: true
+  become_method: sudo
+  vars_files: /ansible/secrets.yaml
+
+  tasks:
+    - name: Pause 5 minutes for reboot before running managernode sosetup
+      pause:
+        minutes: 5
+
+    - name: Fix is_airgap variable for unattended offline install on SO  2.3.140
+      lineinfile:
+        path: "/home/{{SOManager.Username}}/SecurityOnion/setup/so-setup"
+        insertafter: '^automation\=\$2'
+        line: 'is_airgap=true'
+      become: True
+
+    - name: Change permissions on Security Onion Bash Scripts
+      shell: "cd /home/{{SOManager.Username}}/SecurityOnion && find . -name *.sh | while read line; do chmod 754 $line ;done"
+      become: true
+
+    - name: Run Security Onion Managernode Setup
+      shell: |
+        cd "/home/{{SOManager.Username}}/SecurityOnion/setup/automation"
+        "sudo /home/{{SOManager.Username}}/SecurityOnion/setup/so-setup network distributed-airgap-manager"
+      ignore_errors: yes
+      become: true

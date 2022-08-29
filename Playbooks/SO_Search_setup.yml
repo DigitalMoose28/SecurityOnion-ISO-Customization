@@ -1,0 +1,23 @@
+- name: configure seconion distributed search node
+  hosts: searchnode
+  become: true
+  become_method: sudo
+  vars_files: vars/secrets.yml
+
+  tasks:
+        - name: Pause for 5 minutes for reboot
+          pause:
+            minutes: 5
+
+        - name: Fix is_airgap variable for unattended offline install on SO  2.3.140
+          lineinfile:
+            path: /home/{{so_user}}/SecurityOnion/setup/so-setup
+            insertafter: '^automation\=\$2'
+            line: 'is_airgap=true'
+
+    - name: Run Security Onion Searchnode Setup
+      shell: |
+        cd "/home/{{SOSearch.Username}}/SecurityOnion/setup/automation"
+        "sudo /home/{{SOSearch.Username}}/SecurityOnion/setup/so-setup network distributed-airgap-manager"
+      ignore_errors: yes
+      become: true

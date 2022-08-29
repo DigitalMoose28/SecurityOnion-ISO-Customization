@@ -1,0 +1,72 @@
+---
+- name: Create SecOnion Manager VM from a template
+  hosts: localhost
+  gather_facts: no
+  vars_files: /ansible/secrets.yaml
+  tasks:
+  - name: Configure seconion-managernode Virtual Machine Resources
+    vmware_guest:
+      hostname: "{{VCSA.IP}}"
+      username: "{{VCSA.Username}}"
+      password: "{{ DMSS_Pass}}"
+      validate_certs: False
+      guest_id: "centos7_64Guest"
+      name: SO_Manager
+      datacenter: "{{ VCSA.datacenter }}"
+      datastore: "{{ VCSA.datastore}}"
+      folder: /
+      state: restarted
+      disk:
+        - size_gb: "{{ SOManager.Storage}}"
+          type: "thin"
+          datastore: "SO_datastore"
+      hardware:
+          memory_mb: "{{SOManager.Mem}}"
+          num_cpus: "{{SOManager.CPU}}"
+          boot_firmware: "efi"
+          hotadd_cpu: True
+          hotremove_cpu: True
+          hotadd_memory: False
+      cdrom:
+          type: iso
+          iso_path: "[SO_datastore] SOManager.iso"
+      networks:
+        - name: "Network"
+          type: static
+          device_type: "vmxnet3"
+          start_connected: true
+      wait_for_ip_address: no
+
+
+  - name: Configure seconion-managernode Virtual Machine Resources
+    vmware_guest:
+      hostname: "{{VCSA.IP}}"
+      username: "{{VCSA.Username}}"
+      password: "{{Pass}}"
+      validate_certs: False
+      guest_id: "centos7_64Guest"
+      name: SO_Search
+      datacenter: "{{ VCSA.datacenter }}"
+      datastore: "{{ VCSA.datastore}}"
+      folder: /
+      state: restarted
+      disk:
+        - size_gb: "{{ SOSearch.Storage}}"
+          type: "thin"
+          datastore: "SO_datastore"
+      hardware:
+          memory_mb: "{{SOSearch.Mem}}"
+          num_cpus: "{{SOSearch.CPU}}"
+          boot_firmware: "efi"
+          hotadd_cpu: True
+          hotremove_cpu: True
+          hotadd_memory: False
+      cdrom:
+          type: iso
+          iso_path: "[SO_datastore] SOSearch.iso"
+      networks:
+        - name: "Network"
+          type: static
+          device_type: "vmxnet3"
+          start_connected: true
+      wait_for_ip_address: no

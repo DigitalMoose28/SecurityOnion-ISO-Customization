@@ -1,0 +1,20 @@
+---
+-
+  hosts: localhost
+  vars_files: "/ansible/secrets.yaml"
+  tasks:
+    - name: mount esxi images
+      shell: |
+          cat /ansible/files/templates/smc3 | sudo /ansible/SMCIPMITool/SMCIPMITool "{{ item.0 }}" ansible "{{ IPMI_Pass }}" shell
+      with_together:
+        - ["{{MR1.IP}}"]
+        - ["{{MR1.smc}}"]
+      become: yes
+      become_method: sudo
+
+
+    - name: pause for 5
+      pause:
+        minutes: 5
+...
+

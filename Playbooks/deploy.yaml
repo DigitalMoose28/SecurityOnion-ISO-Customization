@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  gather_facts: false
+  become: no
+  vars_prompt:
+    - name: IPMI_Password
+      prompt: "What is the IPMI Password? Remember, no special characters(!@#$%^)"
+      private: no
+
+    - name: Password
+      prompt: "What is the password going to be for this deployment?"
+      private: no
+
+    - name: octet
+      prompt: "What is the first 3 octects?(10.1.0) Note, this octet must match the IP scheme of the IPMI interfaces on all of the Servers!!!"
+      private: no
+
+    - name: domain
+      prompt: "Enter your domain name)"
+      private: no
+
+ 
+    secret_file: '/ansible/files/templates/secrets.yaml'
+    hosts_file: '/ansible/files/hosts'
+
+  tasks:
+
+    - name: generate secrets file
+      template:
+        src: "{{ secret_file }}"
+        dest: '/ansible/secrets.yaml'
+        mode: 0777
+      become: no
+
+-
+  hosts: localhost
+  vars_files: '/ansible/secrets.yaml'
+
+  tasks:
+    - name: generate hosts file
+      template:
+        src: "/ansible/files/templates/hosts.yaml"
+        dest: "/ansible/hosts.yaml"
+        mode: 0777
+
+    - name: generate vars files
+      template:
+        src: "/ansible/files/templates/vars/{{item.0}}"
+        dest: "/ansible/{{item.1}}"
+        mode: 0777
+      with_together:
+        - ["seconion","localhost"]
+        - ["group_vars/","host_vars/"]
+
+
+

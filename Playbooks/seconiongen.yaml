@@ -1,0 +1,44 @@
+---
+    - name: copy kickstart to so dir
+      template:
+        src: "/ansible/files/templates/{{ item }}.cfg" 
+        dest: "/opt/baremetal/seconion/ks.cfg"
+      become: yes
+
+    - name: manager automation
+      template:
+        src: "/ansible/files/templates/distributed-airgap-manager"
+        dest: "/opt/baremetal/seconion/SecurityOnion/setup/automation/"
+      become: yes
+
+    - name: search automation
+      template:
+        src: "/ansible/files/templates/distributed-airgap-search"
+        dest: "/opt/baremetal/seconion/SecurityOnion/setup/automation/"
+      become: yes
+
+    - name: sensor automation
+      template:
+        src: "/ansible/files/templates/distributed-airgap-sensor"
+        dest: "/opt/baremetal/seconion/SecurityOnion/setup/automation/"
+      become: yes
+   
+    - name: chmod the sys
+      shell: | 
+       sudo chmod +x -R /opt/baremetal/seconion/ 
+      become: yes
+    
+    
+    - name: compile Security Onion "{{item}}"
+      shell: |
+        cd /opt/baremetal/seconion/
+        sudo mkisofs -o "/ansible/files/seconion/{{item}}.iso" -allow-limited-size -b isolinux.bin -J -R -l -c boot.cat --no-emul-boot  --boot-load-size 4 --boot-info-table --eltorito-alt-boot -e images/efiboot.img -no-emul-boot -graft-points -joliet-long -R -V "CentOS 7 x86_64" .
+      become: yes
+
+    - name: convert to uefi
+      shell: |
+        sudo isohybrid --uefi "/ansible/files/seconion/{{item}}.iso"
+        sudo chmod 777 "/ansible/files/seconion/{{item}}.iso"
+      become: yes
+
+... 

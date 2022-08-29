@@ -1,0 +1,32 @@
+- name: configure seconion distributed master node
+  hosts: SO_MGR
+  user: admin
+  vars_files: "/ansible/secrets.yaml"
+
+  tasks:
+    - name: create elastic stack license directory
+      shell: 'sudo mkdir -p /opt/so/state'
+      become: True
+
+    - name: Create Elastic Stack license file
+      file:
+        state: touch
+        path: /opt/so/state/yeselastic.txt
+        mode: '644'
+      become: True
+    
+    - name: Copy SecOnion Managernode setup configuration file
+      template:
+        src: "/ansible/files/seconion/distributed-airgap-manager"
+        dest: "/home/{{SOManager.Username}}/SecurityOnion/setup/automation/distributed-airgap-manager"
+        owner: {{ SOManager.Username}}
+        group: {{ SOManager.Username}}
+        mode: 0644
+      become: true
+
+             
+    - name: Unconditionally reboot the machine with all defaults
+      reboot:
+        reboot_timeout: 1800
+      become: True
+

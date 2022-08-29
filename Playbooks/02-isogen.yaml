@@ -1,0 +1,50 @@
+---
+
+-
+  hosts: localhost
+  gather_facts: no
+  become: yes
+  vars_files: '/ansible/secrets.yaml'
+  vars:
+    - ansible_python_interpreter: python3
+    - ansible_host_key_checking: false
+    - validate_certs: false
+
+  tasks:
+
+    - name: Mount SO and remove default configs
+      shell: | 
+        sudo mkdir -p /opt/baremetal/seconion
+        sudo mkdir -p /mnt/seconion
+        sudo mount -o loop -t iso9660 "/ansible/files/isos/{{onionIso}}" /mnt/seconion
+        sudo cp -r /mnt/seconion/* /opt/baremetal/seconion
+        sudo rm -f /opt/baremetal/seconion/isolinux.cfg
+        sudo rm -f /opt/baremetal/seconion/ks.cfg
+        umount /mnt/seconion
+
+    - name: copy new isolinux.cfg iso
+      template:
+        src: "/ansible/files/templates/so_isolinux.cfg"
+        dest: "/opt/baremetal/seconion/isolinux.cfg"
+
+    - name: copy new isolinux.cfg iso
+      template:
+        src: "/ansible/files/templates/so_isolinux.cfg"
+        dest: "/opt/baremetal/seconion/EFI/BOOT/isolinux.cfg"
+
+    - name: create SecOnion ISOs
+      include_tasks: /ansible/playbooks/seconiongen.yaml
+      loop:
+        - SOManager
+        - SOSearch
+        - SOSensor1
+
+
+    - name: remove SO ISO directory
+      shell:
+        sudo rm -rf /opt/baremetal/*
+
+    - name: chown isos
+      shell: |
+        sudo chown -R cptadmin:cptadmin /ansible
+... 

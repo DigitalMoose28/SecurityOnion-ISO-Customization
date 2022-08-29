@@ -35,6 +35,7 @@ sudo cp /mnt/SecurityOnion/setup/automation/distributed-airgap-* /tmp/seconion
 cd /tmp/seconion
 </code></pre>
 ##########################################################################################################################################################
+
 We are primarily concerned with three files: isolinux.cfg and ks.cfg and the distributed-airgap files
 ### isolinux.cfg configurations
 The isolinux.cfg file is the boot menu that allows the user to select how they want to boot the system. Since most methods of installing security utilize a mounted cdrom (ESXI, IPMI) we need to change isolinux.cfg to reflect this.

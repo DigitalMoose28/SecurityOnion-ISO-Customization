@@ -1,0 +1,61 @@
+all:
+  children:
+    IPMI:
+      children:
+        IPMI_CP1:
+          hosts:
+            {{ CP1.IP }}
+        IPMI_CP2:
+          hosts:
+            {{ CP2.IP }}
+        IPMI_CP3:
+          hosts:
+            {{ CP3.IP }}
+        IPMI_MR1:
+          hosts:
+            {{ MR1.IP }}
+        IPMI_MR2:
+          hosts:
+            {{ MR2.IP }}
+        IPMI_MR3:
+          hosts:
+            {{ MR3.IP }}
+        IPMI_MR4:
+          hosts:
+            {{ MR4.IP }}
+        IPMI_MR5:
+          hosts:
+            {{ MR5.IP }}
+        IPMI_MR6:
+          hosts:
+            {{ MR6.IP }}
+    seconion:
+      children:
+        SO_MGR:
+          hosts:
+            {{ SOManager.IP }}
+        SO_Search:
+          hosts:
+            {{ SOSearch.IP }}
+        SO_Sensor1:
+          hosts:
+            {{ SOSensor1.IP }}
+        SO_Sensor2:
+          hosts:
+            {{ SOSensor2.IP }}
+        SO_Sensor3:
+          hosts:
+            {{ SOSensor3.IP }}
+        SO_Sensor4:
+          hosts:
+            {{ SOSensor4.IP }}
+        SO_Sensor5:
+          hosts:
+            {{ SOSensor5.IP }}
+        SO_Sensor6:
+           hosts:
+            {{ SOSensor6.IP }}
+    VCSA:
+      hosts:
+        {{ VCSA.IP }}
+ 

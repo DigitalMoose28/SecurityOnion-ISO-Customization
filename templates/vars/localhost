@@ -1,0 +1,9 @@
+---
+ansible_connection: local
+ansible_become: yes
+ansible_become_password: {{ Pass }}
+ansible_become_method: sudo
+
+
+
+...

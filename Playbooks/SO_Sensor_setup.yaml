@@ -1,8 +1,8 @@
 - name: configure seconion distributed sensor node
-  hosts: sensornode
+  hosts: SOSensor1
   become: true
   become_method: sudo
-  vars_files: vars/secrets.yml
+  vars_files: /ansible/secrets.yml
 
   tasks:
         - name: Pause for 5 minutes for reboot

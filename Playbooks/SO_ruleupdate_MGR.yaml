@@ -10,16 +10,16 @@
           copy:
             src: /home/ansible/ansible/secOnion-custom/files/emerging-all.rules
             dest: /nsm/repo/rules/emerging-all.rules
-            owner: {{owner}}
-            group: {{group}}
+            owner: {{SOManager.Username}}
+            group: {{SOManager.Username}}
             mode: 0644
 
         - name: Copy suricata rules md5 file to security onion manager
           copy:
             src: /home/ansible/ansible/secOnion-custom/files/emerging-all.rules.md5
             dest: /nsm/repo/rules/emerging-all.rules.md5
-            owner: {{owner}}
-            group: {{group}}
+            owner: {{SOManager.Username}}
+            group: {{SOManager.Username}}
             mode: 0644
 
         - name: Run rule update
@@ -29,27 +29,27 @@
           lineinfile:
             dest: /opt/so/saltstack/local/pillar/minions/seconion-sensornode_sensor.sls
             regexp: '^  zeek_lbprocs.*'
-            line: '  zeek_lbprocs: {{zeek_lbprocs}}'
+            line: '  zeek_lbprocs: {{SOManager.zeek_lbprocs}}'
             backrefs: yes
 
         - name: Set suricata processor numbers in salt configuration
           lineinfile:
             dest: /opt/so/saltstack/local/pillar/minions/seconion-sensornode_sensor.sls
             regexp: '^  suriprocs.*'
-            line: '  suriprocs: {{suriprocs}}'
+            line: '  suriprocs: {{SOManager.suriprocs}}'
             backrefs: yes
 
         - name: replace esheap line in seconion manager minion file
           replace:
             path: /opt/so/saltstack/local/pillar/minions/seconion-managernode_manager.sls
             regexp: '^  esheap.*'
-            replace: '  esheap: {{esheap}}'
+            replace: '  esheap: {{SOManager.esheap}}'
 
         - name: Set searchnode elasticsearch heap space in salt configuration
           lineinfile:
             dest: /opt/so/saltstack/local/pillar/minions/seconion-searchnode_searchnode.sls
             regexp: '^  esheap.*'
-            line: '  esheap: {{esheap}}'
+            line: '  esheap: {{SOManager.esheap}}'
             backrefs: yes
 
         - name: rerun salt update

@@ -95,6 +95,7 @@ Before we discuss changing the kickstart script, let's discuss our goals
 
 
 Below is an example of the customized ks.cfg file. 
+NOTE: Interfaces will change depending on the environment. ens192 is typically the first interface to populate in an ESXI environment. ens33 is the first to populate in a VMWare Workstation environment. It will take some testing to get it correct for your environment.
 <pre><code>
 # Set the firewall to allow SSH
 firewall --enabled --port=22:tcp

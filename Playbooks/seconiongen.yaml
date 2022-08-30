@@ -23,6 +23,12 @@
         dest: "/opt/baremetal/seconion/SecurityOnion/setup/automation/"
       become: yes
    
+       - name: Replace so-functions file
+      copy:
+        src: "/ansible/files/templates/so-functions"
+        dest: "/opt/baremetal/seconion/SecurityOnion/setup/
+      become: yes
+      
     - name: chmod the sys
       shell: | 
        sudo chmod +x -R /opt/baremetal/seconion/ 

@@ -36,7 +36,7 @@ cd /tmp/seconion
 </code></pre>
 ###############################################################################################################
 
-We are primarily concerned with three files: isolinux.cfg and ks.cfg and the distributed-airgap files
+We are primarily concerned with four files: isolinux.cfg, ks.cfg, so-functions and the distributed-airgap files
 ### isolinux.cfg configurations
 The isolinux.cfg file is the boot menu that allows the user to select how they want to boot the system. Since most methods of installing security utilize a mounted cdrom (ESXI, IPMI) we need to change isolinux.cfg to reflect this.
 
@@ -564,6 +564,20 @@ WAZUH=1
 WEBUSER=onionuser@somewhere.invalid
 WEBPASSWD1=0n10nus3r
 WEBPASSWD2=0n10nus3r
+</code></pre>
+Next we need to change part of the so-functions file. During the automated installation the detect_cloud() function will hang on the curl if it is not removed.
+<pre><code>
+detect_cloud() {
+  echo "Testing if setup is running on a cloud instance..." | tee -a "$setup_log"
+  if ( curl --fail -s -m 5 http://169.254.169.254/latest/meta-data/instance-id > /dev/null ) || ( dmidecode -s bios-vendor | grep -q Google > /dev/null) || [ -f /var/log/waagent.log ]; then export is_cloud="true"; fi
+}
+</code></pre>
+Change to
+<pre><code>
+detect_cloud() {
+  echo "Testing if setup is running on a cloud instance..." | tee -a "$setup_log"
+  if ( dmidecode -s bios-vendor | grep -q Google > /dev/null) || [ -f /var/log/waagent.log ]; then export is_cloud="true"; fi
+}
 </code></pre>
 We are going to change the file to hold ansible variables that will reflect in our secrets.yaml file.
 Note: This is the general process that will be needed for the distributed-airgap-search and the distributed-airgap-sensor fiels as well.

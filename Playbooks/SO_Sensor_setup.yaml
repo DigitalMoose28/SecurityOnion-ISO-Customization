@@ -18,6 +18,6 @@
     - name: Run Security Onion Sensor Setup
       shell: |
         cd "/home/{{SOSensor1.Username}}/SecurityOnion/setup/automation"
-        "sudo /home/{{SOSensor1.Username}}/SecurityOnion/setup/so-setup network distributed-airgap-manager"
+        sudo "/home/{{SOSensor1.Username}}/SecurityOnion/setup/so-setup network distributed-airgap-manager"
       ignore_errors: yes
       become: true
